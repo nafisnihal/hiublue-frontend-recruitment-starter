@@ -1,6 +1,6 @@
 "use client";
-import { loginUser } from "@/utils/authService";
-import { getToken, removeToken, setToken } from "@/utils/token";
+import { loginUser } from "@/services/authService";
+import { getToken, removeToken, setToken } from "@/services/tokenService";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 
