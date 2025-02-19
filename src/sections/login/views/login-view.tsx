@@ -126,6 +126,11 @@ export default function SignIn() {
                 size="small"
                 sx={{ mt: 1 }}
               />
+              {errors.email && (
+                <Typography variant="body2" color="error">
+                  {errors.email.message}
+                </Typography>
+              )}
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="password">Password</FormLabel>

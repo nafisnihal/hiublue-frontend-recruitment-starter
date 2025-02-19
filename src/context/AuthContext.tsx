@@ -1,87 +1,66 @@
 "use client";
-
-import Cookies from "js-cookie";
+import { loginUser } from "@/utils/authService";
+import { getToken, removeToken, setToken } from "@/utils/token";
 import { useRouter } from "next/navigation";
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
+import { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextType {
-  user: User | null;
+  user: any;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | null>(null);
+
+import { ReactNode } from "react";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
+    const token = getToken();
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
+    if (token && storedUser) {
       setUser(JSON.parse(storedUser));
     }
+    setIsLoading(false);
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch("https://dummy-1.hiublue.com/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Invalid credentials");
-      }
-
-      const data = await response.json();
-      const { user, token } = data;
-
-      Cookies.set("token", token, { expires: 1 });
-
-      // Save user and token in local storage
+      const { user, token } = await loginUser(email, password);
+      setToken(token);
       localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("token", token);
-
       setUser(user);
-      router.push("/"); // Redirect to dashboard
+      router.push("/");
     } catch (error) {
-      throw new Error("Login failed. Please try again.");
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      } else {
+        throw new Error("An unknown error occurred");
+      }
     }
   };
 
   const logout = () => {
     setUser(null);
+    removeToken();
     localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    Cookies.remove("token");
     router.push("/login");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-export function useAuth() {
+export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
-}
+};
