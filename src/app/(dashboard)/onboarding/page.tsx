@@ -1,4 +1,3 @@
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import OnboardingView from "@/sections/onboarding/views/onboarding-view";
 
 export const metadata = {
@@ -6,9 +5,5 @@ export const metadata = {
 };
 
 export default function Page() {
-  return (
-    <ProtectedRoute>
-      <OnboardingView />
-    </ProtectedRoute>
-  );
+  return <OnboardingView />;
 }

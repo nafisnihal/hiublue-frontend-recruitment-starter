@@ -3,7 +3,6 @@ import ThemeProvider from "@/theme/index";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import CssBaseline from "@mui/material/CssBaseline";
 import InitColorSchemeScript from "@mui/material/InitColorSchemeScript";
-import * as React from "react";
 
 export default function RootLayout({
   children,
