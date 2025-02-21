@@ -26,7 +26,6 @@ export default function DashboardLayout({
     }
   }, [user, isLoading, router]);
 
-  // ✅ Prevent rendering the dashboard layout until auth is confirmed
   if (isLoading || checkingAuth) return null;
 
   if (!user) return null;
