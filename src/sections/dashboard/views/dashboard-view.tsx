@@ -8,7 +8,7 @@ import {
 import { useEffect, useState } from "react";
 
 export default function DashboardView() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [summary, setSummary] = useState(null);
   const [stats, setStats] = useState(null);
 
@@ -27,7 +27,6 @@ export default function DashboardView() {
       <h1>Welcome, {user?.name}</h1>
       {summary && <pre>{JSON.stringify(summary, null, 2)}</pre>}
       {stats && <pre>{JSON.stringify(stats, null, 2)}</pre>}
-      <button onClick={logout}>Logout</button>
     </div>
   );
 }
