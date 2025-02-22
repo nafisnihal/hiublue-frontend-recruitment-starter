@@ -59,8 +59,21 @@ export default function Stats({ filter }: StatProps) {
   );
 
   return (
-    <Box display="flex" gap={"24px"} mt={"24px"}>
-      <Card sx={{ flex: 1, p: 3 }}>
+    <Box
+      sx={{
+        display: "flex",
+        gap: "24px",
+        alignItems: "center",
+        flexWrap: { xs: "wrap", lg: "nowrap" },
+        mt: "24px",
+      }}
+    >
+      <Card
+        sx={{
+          width: { xs: "100%", lg: "calc(50% - 12px)" },
+          p: 3,
+        }}
+      >
         <Typography variant="h6" pb={3}>
           Website visits
         </Typography>
@@ -86,7 +99,12 @@ export default function Stats({ filter }: StatProps) {
           }}
         />
       </Card>
-      <Card sx={{ flex: 1, p: 3 }}>
+      <Card
+        sx={{
+          width: { xs: "100%", lg: "calc(50% - 12px)" },
+          p: 3,
+        }}
+      >
         <Typography variant="h6" pb={3}>
           Offers sent
         </Typography>

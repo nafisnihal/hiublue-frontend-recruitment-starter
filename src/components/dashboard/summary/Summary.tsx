@@ -40,6 +40,7 @@ export default function Summary({ filter }: SummaryProps) {
         gap: 3,
         justifyContent: "space-between",
         alignItems: "center",
+        flexWrap: { xs: "wrap", lg: "nowrap" },
         mt: 2,
       }}
     >
