@@ -42,7 +42,7 @@ export default function Sidebar({ width }: { width: number }) {
         </Box>
         <Box
           component={Link}
-          href={"/"}
+          href={"/onboarding"}
           sx={{
             padding: "12px",
             paddingLeft: "0",
@@ -55,7 +55,7 @@ export default function Sidebar({ width }: { width: number }) {
           }}
         >
           <img src="/icons/onboard-icon.svg" alt="" />
-          <Typography variant="body2">Overview</Typography>
+          <Typography variant="body2">Onboarding</Typography>
         </Box>
       </Box>
     </aside>

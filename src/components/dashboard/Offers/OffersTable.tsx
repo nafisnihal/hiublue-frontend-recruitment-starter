@@ -4,6 +4,7 @@ import { fetchOffers } from "@/services/dashboardService";
 import {
   Box,
   Card,
+  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
@@ -40,11 +41,19 @@ export default function OffersTable() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [loading, setLoading] = useState(true); // ✅ Added loading state
 
   useEffect(() => {
     async function fetchData() {
-      const data = await fetchOffers(page, rowsPerPage);
-      setOffers(data?.data);
+      setLoading(true); // ✅ Start loading
+      try {
+        const data = await fetchOffers(page, rowsPerPage);
+        setOffers(data?.data);
+      } catch (error) {
+        console.error("Error fetching offers:", error);
+      } finally {
+        setLoading(false); // ✅ Stop loading
+      }
     }
     fetchData();
   }, [page, rowsPerPage]);
@@ -71,12 +80,7 @@ export default function OffersTable() {
       <Typography variant="h5" pb={3}>
         Offer List
       </Typography>
-      <Box
-        sx={{
-          borderBottom: "1px solid #919EAB29",
-          mb: 1,
-        }}
-      >
+      <Box sx={{ borderBottom: "1px solid #919EAB29", mb: 1 }}>
         <Tabs
           value={filterStatus || ""}
           onChange={(_e, newValue) => setFilterStatus(newValue)}
@@ -88,6 +92,7 @@ export default function OffersTable() {
         </Tabs>
       </Box>
 
+      {/* Search & Filter */}
       <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
         <TextField
           label="Search"
@@ -111,6 +116,8 @@ export default function OffersTable() {
           </Select>
         </FormControl>
       </Box>
+
+      {/* Table */}
       <TableContainer>
         <Table>
           <TableHead>
@@ -124,52 +131,63 @@ export default function OffersTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredOffers?.map((offer) => (
-              <TableRow key={offer?.id}>
-                <TableCell>
-                  {offer?.user_name}
-                  <br />
-                  <small
-                    style={{
-                      color: "#919EAB",
-                    }}
-                  >
-                    {offer?.email}
-                  </small>
-                </TableCell>
-                <TableCell>{offer?.phone}</TableCell>
-                <TableCell>{offer?.company}</TableCell>
-                <TableCell>{offer?.jobTitle}</TableCell>
-                <TableCell>{offer?.type}</TableCell>
-                <TableCell>
-                  <span
-                    style={{
-                      padding: "5px 10px",
-                      borderRadius: "5px",
-                      backgroundColor:
-                        offer?.status === "accepted"
-                          ? "#22C55E29"
-                          : offer?.status === "rejected"
-                          ? "#FF563029"
-                          : "#FFAB0029",
-                      color:
-                        offer?.status === "accepted"
-                          ? "#118D57"
-                          : offer?.status === "rejected"
-                          ? "#B71D18"
-                          : "#B76E00",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {offer?.status.charAt(0).toUpperCase() +
-                      offer?.status.slice(1)}
-                  </span>
+            {loading ? (
+              <TableRow sx={{ height: 380 }}>
+                <TableCell colSpan={6} align="center">
+                  <CircularProgress size={24} color="secondary" />
                 </TableCell>
               </TableRow>
-            ))}
+            ) : filteredOffers.length > 0 ? (
+              filteredOffers?.map((offer) => (
+                <TableRow key={offer?.id}>
+                  <TableCell>
+                    {offer?.user_name}
+                    <br />
+                    <small style={{ color: "#919EAB" }}>{offer?.email}</small>
+                  </TableCell>
+                  <TableCell>{offer?.phone || "N/A"}</TableCell>
+                  <TableCell>{offer?.company || "N/A"}</TableCell>
+                  <TableCell>{offer?.jobTitle || "N/A"}</TableCell>
+                  <TableCell sx={{ textTransform: "capitalize" }}>
+                    {offer?.type}
+                  </TableCell>
+                  <TableCell sx={{ textTransform: "capitalize" }}>
+                    <span
+                      style={{
+                        padding: "5px 10px",
+                        borderRadius: "5px",
+                        backgroundColor:
+                          offer?.status === "accepted"
+                            ? "#22C55E29"
+                            : offer?.status === "rejected"
+                            ? "#FF563029"
+                            : "#FFAB0029",
+                        color:
+                          offer?.status === "accepted"
+                            ? "#118D57"
+                            : offer?.status === "rejected"
+                            ? "#B71D18"
+                            : "#B76E00",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {offer?.status}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6} align="center">
+                  No offers found.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Pagination */}
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
