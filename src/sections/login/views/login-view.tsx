@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
+import { Alert, Snackbar } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import MuiCard from "@mui/material/Card";
@@ -18,6 +19,7 @@ import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { useState } from "react";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -71,6 +73,9 @@ type LoginFormInputs = z.infer<typeof loginSchema>;
 export default function SignIn() {
   const { login } = useAuth();
 
+  const [errorMessage, setErrorMessage] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -83,7 +88,8 @@ export default function SignIn() {
     try {
       await login(data.email, data.password);
     } catch (error) {
-      alert((error as Error)?.message);
+      setErrorMessage((error as Error)?.message);
+      setOpenSnackbar(true);
     }
   };
 
@@ -174,6 +180,16 @@ export default function SignIn() {
           </Box>
         </Card>
       </SignInContainer>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert onClose={() => setOpenSnackbar(false)} severity="error">
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 }
