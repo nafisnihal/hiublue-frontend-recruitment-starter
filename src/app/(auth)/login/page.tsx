@@ -4,10 +4,6 @@ import LoginView from "@/sections/login/views/login-view";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export const metadata = {
-  title: "Login",
-};
-
 export default function Page() {
   const { user } = useAuth();
   const router = useRouter();
