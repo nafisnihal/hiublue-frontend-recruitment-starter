@@ -41,18 +41,18 @@ export default function OffersTable() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
-  const [loading, setLoading] = useState(true); // ✅ Added loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
-      setLoading(true); // ✅ Start loading
+      setLoading(true);
       try {
         const data = await fetchOffers(page, rowsPerPage);
         setOffers(data?.data);
       } catch (error) {
         console.error("Error fetching offers:", error);
       } finally {
-        setLoading(false); // ✅ Stop loading
+        setLoading(false);
       }
     }
     fetchData();
